@@ -9,18 +9,21 @@ func main() {
 	//DONE: Run the shell command
 	//DONE: Loop over it so it get executed multiple times
 	//DONE: Add a array of keywords
-	//TODO: Loop over the array of keywords so that they are used
-	//TODO: Make the keywords array fill in the placeholders
+	//DONE: Loop over the array of keywords so that they are used
+	//DONE: Make the keywords array fill in the placeholders
 
-	for i := 0; i < 10; i++ {
-		titles := [3]string{"dashboard", "team", "permissions"}
-		cmd := exec.Command("gh", "issue", "create", "-t", "test", "-b", "test2")
+	titles := []string{"dashboard", "team", "permissions"}
 
-		out, err := cmd.Output()
+	for _, title := range titles {
+		cmd := exec.Command("gh", "issue", "create", "-t", title, "-b", "test2")
+
+		output, err := cmd.CombinedOutput()
 		if err != nil {
-			fmt.Println("could not run command: ", err)
+			fmt.Printf("Error creating issue with title %s: %s\n", title, err)
+			continue
 		}
 
-		fmt.Println(string(out))
+		fmt.Printf("Output for title %s: %s\n", title, string(output))
 	}
+
 }
