@@ -15,7 +15,7 @@ func main() {
 	titles := []string{"dashboard", "team", "permissions"}
 
 	for _, title := range titles {
-		cmd := exec.Command("gh", "issue", "create", "-t", title, "-b", "test2")
+		cmd := exec.Command("gh", "issue", "create", "-t", title, "-F", "issue-template.md")
 
 		output, err := cmd.CombinedOutput()
 		if err != nil {
