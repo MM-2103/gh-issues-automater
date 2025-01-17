@@ -11,10 +11,15 @@ func main() {
 	//DONE: Add a array of keywords
 	//DONE: Loop over the array of keywords so that they are used
 	//DONE: Make the keywords array fill in the placeholders
+	//TODO: Possible 4 stories per subject (ie: dashboard create, read, update, delete)
+	//TODO: CRUD or no CRUD
+	//TODO: JSON file with the subject and the option to do CRUD or not
+	//TODO: Possibility to execute the command with flags instead of passing JSON
 
 	titles := []string{"dashboard", "team", "permissions"}
 
 	for _, title := range titles {
+		// Als VAR wil ik VAR2 omdat VAR3
 		cmd := exec.Command("gh", "issue", "create", "-t", title, "-F", "issue-template.md")
 
 		output, err := cmd.CombinedOutput()
