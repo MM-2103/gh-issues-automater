@@ -1,3 +1,12 @@
+---
+name: Issue
+about: Create new project issue
+title: ''
+labels: ''
+assignees: ''
+
+---
+
 # Definition of done
 A clear and concise description of what you want to happen.
 

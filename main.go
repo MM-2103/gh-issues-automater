@@ -20,7 +20,7 @@ func main() {
 
 	for _, title := range titles {
 		// Als VAR wil ik VAR2 omdat VAR3
-		cmd := exec.Command("gh", "issue", "create", "-t", title, "-F", "issue-template.md")
+		cmd := exec.Command("gh", "issue", "create", "-t", title, "-F", ".github/ISSUE_TEMPLATE/issue-template.md")
 
 		output, err := cmd.CombinedOutput()
 		if err != nil {
