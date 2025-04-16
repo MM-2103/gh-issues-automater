@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"os/exec"
 )
@@ -19,10 +21,26 @@ type CrudOpts struct {
 	Delete bool `json:"delete"`
 }
 
+type OpenRouterModel struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+type OpenRouterResponse struct {
+	Data []OpenRouterModel `json:"data"`
+}
+
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Usage: issue-creator <config-file.json>")
+		fmt.Println("Usage: issue-creator <config-file.json> or --list-models openrouter/")
 		os.Exit(1)
+	}
+
+	// Check for command line flags
+	if os.Args[1] == "--list-models" && len(os.Args) > 2 && os.Args[2] == "openrouter/" {
+		listOpenRouterModels()
+		return
 	}
 
 	configFile := os.Args[1]
@@ -100,4 +118,47 @@ func createIssue(repo, title string) {
 	}
 
 	fmt.Printf("Successfully created issue: %s\n", title)
+}
+
+func listOpenRouterModels() {
+	url := "https://openrouter.ai/api/v1/models"
+	
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Printf("Error creating request: %v\n", err)
+		return
+	}
+	
+	// Add API key if available
+	apiKey := os.Getenv("OPENROUTER_API_KEY")
+	if apiKey != "" {
+		req.Header.Add("Authorization", "Bearer "+apiKey)
+	}
+	
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("Error fetching models: %v\n", err)
+		return
+	}
+	defer resp.Body.Close()
+	
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Error: received status code %d\n", resp.StatusCode)
+		body, _ := io.ReadAll(resp.Body)
+		fmt.Println(string(body))
+		return
+	}
+	
+	var openRouterResp OpenRouterResponse
+	if err := json.NewDecoder(resp.Body).Decode(&openRouterResp); err != nil {
+		fmt.Printf("Error decoding response: %v\n", err)
+		return
+	}
+	
+	fmt.Println("Available OpenRouter Models:")
+	fmt.Println("===========================")
+	for _, model := range openRouterResp.Data {
+		fmt.Printf("ID: %s\nName: %s\nDescription: %s\n\n", model.ID, model.Name, model.Description)
+	}
 }
